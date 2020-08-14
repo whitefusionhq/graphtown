@@ -1,0 +1,16 @@
+{
+  "name": "graphtown",
+  "version": "0.1.0",
+  "main": "frontend/javascript/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/graphtown.git"
+  },
+  "author": "Bridgetown Maintainers <maintainers@bridgetownrb.com>",
+  "homepage": "https://www.bridgetownrb.com",
+  "license": "MIT",
+  "private": false,
+  "files": [
+    "frontend"
+  ]
+}
