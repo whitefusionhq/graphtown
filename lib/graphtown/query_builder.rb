@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "graphlient"
 require "active_support/concern"
 
@@ -23,7 +25,9 @@ module Graphtown
       self.class.graphql_queries.each_pair do |graph_name, block|
         graph_dsl = Graphlient::Query.new(&block)
 
-        query_variables = respond_to?("variables_for_#{graph_name}") ? send("variables_for_#{graph_name}") : nil
+        query_variables = if respond_to?("variables_for_#{graph_name}")
+                            send("variables_for_#{graph_name}")
+                          end
 
         self.class.graphql_queries.send(
           "#{graph_name}=",
