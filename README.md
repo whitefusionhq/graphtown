@@ -10,6 +10,32 @@ Run this command to add this plugin to your site's Gemfile:
 $ bundle add graphtown -g bridgetown_plugins
 ```
 
+And then add the Graphtown mixin to your site builder superclass:
+
+```ruby
+# plugins/site_builder.rb
+
+class SiteBuilder < Bridgetown::Builder
+  include Graphtown::QueryBuilder
+end
+```
+
+You'll need to add your desired GraphQL API endpoint to the site config YAML:
+
+```yaml
+# bridgetown.config.yml
+
+graphql_endpoint: http://localhost:1337/graphql
+```
+
+Alternatively, you can override the `graphql_endpoint` method in your site builder or a specific builder plugin:
+
+```ruby
+def graphql_endpoint
+  "https://some.other.domain/graphql"
+end
+```
+
 ---
 
 # Documentation coming soon…
