@@ -1,7 +1,5 @@
-# master
+# main
 
-* Use this file to keep track of plugin updates
-
-# 0.1.0 / 2020-05-01
+# 1.0.0 / 2020-08-14
 
 * First version
