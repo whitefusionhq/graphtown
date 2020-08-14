@@ -1,6 +1,6 @@
 # Graphtown
 
-A Bridgetown plugin which easily lets you pull in data from GraphQL endpoints and use that to generate new pages.
+Easily consume GraphQL APIs for your Bridgetown website using a tidy Builder DSL on top of the [Graphlient](http://github.com/ashkan18/graphlient) gem.
 
 ## Installation
 

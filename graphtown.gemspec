@@ -5,10 +5,10 @@ require_relative "lib/graphtown/version"
 Gem::Specification.new do |spec|
   spec.name          = "graphtown"
   spec.version       = Graphtown::VERSION
-  spec.author        = "Bridgetown Team"
-  spec.email         = "maintainers@bridgetownrb.com"
-  spec.summary       = "Sample code for creating new Bridgetown plugins"
-  spec.homepage      = "https://github.com/username/graphtown"
+  spec.author        = "Jared White"
+  spec.email         = "jared@whitefusion.io"
+  spec.summary       = "Easily consume GraphQL APIs for your Bridgetown website using a tidy Builder DSL on top of the Graphlient gem."
+  spec.homepage      = "https://github.com/whitefusionhq/graphtown"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r!^(test|script|spec|features|frontend)/!) }
