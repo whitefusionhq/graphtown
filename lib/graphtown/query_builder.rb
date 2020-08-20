@@ -31,7 +31,12 @@ module Graphtown
 
         self.class.graphql_queries.send(
           "#{graph_name}=",
-          client.execute(graph_dsl.to_s, query_variables).data.send(graph_name)
+          client.execute(graph_dsl.to_s, query_variables).data.yield_self do |data|
+            # avoid having to do query.foo.foo if possible
+            data.send(graph_name)
+          rescue NoMethodError
+            data
+          end
         )
       end
 
@@ -40,8 +45,6 @@ module Graphtown
     end
 
     def graphql_client
-      raise "Please add graphql_endpoint to your config file" unless config[:graphql_endpoint]
-
       Graphlient::Client.new(graphql_endpoint) do |client|
         configure_graphql_client(client)
       end
