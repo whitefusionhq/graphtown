@@ -72,9 +72,9 @@ class StrapiPosts < SiteBuilder
 end
 ```
 
-The `queries` object will contain the same graph names as what you define using the `graphql` class method. If the "data root" of the query is the same as the graph name, you don't have to access the root specifically. In other words, you don't have to write `queries.posts.posts.each do |post|`. However, if your data root is different, you'll need to access it specifically (see below).
+The `queries` object will contain the same graph names as what you define using the `graphql` class method. If the "data root" of the query is the same as the graph name, you don't have to access the root specifically. In other words, you don't have to write `queries.posts.posts.each do |post|`. However, if your data root is different, you'll need to access it specifically (see below where it's written as `queries.github.viewer…`).
 
-Here's an example of using an authenticated GitHub API to access a list of repositories owned by user associated with the API key. It includes configuring the Graphlient client to provide the API key in the request header, as well as utilizing query variables which get resolved at runtime.
+Here's an example of using an authenticated GitHub API to access a list of repositories owned by the user associated with the API key. It includes configuring the Graphlient client to provide the API key in the request header, as well as utilizing query variables which get resolved at runtime.
 
 ```ruby
 # plugins/builders/github_graphql.rb
@@ -98,6 +98,7 @@ class GitHubGraphql < SiteBuilder
 
   def variables_for_github
     {
+      # pull this out of the bridgetown.config.yaml, if present:
       number_of_repos: config[:github_repo_limit] || 10
     }
   end
@@ -127,6 +128,8 @@ class GitHubGraphql < SiteBuilder
   end
 end
 ```
+
+Note that these examples show just one GraphQL query defined in the plugin, but you can call the `graphql` class method multiple times with different graph names/queries, and access any or all of them in the `build` method.
 
 If you run into any issues or need further assistance using GraphQL in your Bridgetown project, [please reach out to the Bridgetown community](https://www.bridgetownrb.com/docs/community) via chat or other means. If you think you've encountered a bug, please file an issue here in the GitHub repo. 
 
