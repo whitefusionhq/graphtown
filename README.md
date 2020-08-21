@@ -36,19 +36,99 @@ def graphql_endpoint
 end
 ```
 
----
-
-# Documentation coming soon…
-
 ## Usage
 
-The plugin will…
+You'll start by creating a builder plugin which defines a GraphQL query using the DSL provided by the Graphlient gem. Then, in the `build` method of the plugin, you can execute the query and use that data to add content to your site.
 
-### Optional configuration options
+Here's an example of using the GraphQL API provided by [Strapi](https://strapi.io) (a headless CMS) to turn blog posts authored in the CMS into Bridgetown posts:
 
-The plugin will automatically use any of the following metadata variables if they are present in your site's `_data/site_metadata.yml` file.
+```ruby
+# plugins/builders/strapi_posts.rb
 
-…
+class StrapiPosts < SiteBuilder
+  graphql :posts do
+    query {
+      posts {
+        id
+        title
+        description
+        body
+        createdAt
+      }
+    }
+  end
+
+  def build
+    queries.posts.each do |post|
+      slug = Bridgetown::Utils.slugify(post.title)
+      doc "#{slug}.md" do
+        layout "post"
+        date post.created_at
+        front_matter post.to_h
+        content post.body
+      end
+    end
+  end
+end
+```
+
+The `queries` object will contain the same graph names as what you define using the `graphql` class method. If the "data root" of the query is the same as the graph name, you don't have to access the root specifically. In other words, you don't have to write `queries.posts.posts.each do |post|`. However, if your data root is different, you'll need to access it specifically (see below).
+
+Here's an example of using an authenticated GitHub API to access a list of repositories owned by user associated with the API key. It includes configuring the Graphlient client to provide the API key in the request header, as well as utilizing query variables which get resolved at runtime.
+
+```ruby
+# plugins/builders/github_graphql.rb
+
+class GitHubGraphql < SiteBuilder
+  graphql :github do
+    query(number_of_repos: :int) do
+      viewer do
+        repositories(first: :number_of_repos) do
+          edges do
+            node do
+              name
+              description
+              createdAt
+            end
+          end
+        end
+      end
+    end
+  end
+
+  def variables_for_github
+    {
+      number_of_repos: config[:github_repo_limit] || 10
+    }
+  end
+
+  def build
+    queries.github.viewer.repositories.edges.each do |item|
+      repo = item.node
+      slug = Bridgetown::Utils.slugify(repo.name)
+
+      doc "#{slug}.md" do
+        layout "repository"
+        date repo.created_at
+        title repo.name
+        content repo.description
+      end
+    end
+  end
+
+  def graphql_endpoint
+    "https://api.github.com/graphql"
+  end
+
+  def configure_graphql_client(client)
+    client.options[:headers] = {
+      "Authorization" => "bearer #{ENV["GITHUB_API_TOKEN"]}"
+    }
+  end
+end
+```
+
+If you run into any issues or need further assistance using GraphQL in your Bridgetown project, [please reach out to the Bridgetown community](https://www.bridgetownrb.com/docs/community) via chat or other means. If you think you've encountered a bug, please file an issue here in the GitHub repo. 
 
 ## Testing
 
@@ -63,3 +143,8 @@ The plugin will automatically use any of the following metadata variables if the
 4. Commit your changes (`git commit -am 'Add some feature'`)
 5. Push to the branch (`git push origin my-new-feature`)
 6. Create a new Pull Request
+
+## Releasing
+
+To release a new version of the plugin, simply bump up the version number in
+`version.rb` and then run `script/release`.
