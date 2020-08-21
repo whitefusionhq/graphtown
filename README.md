@@ -1,6 +1,6 @@
 # Graphtown
 
-Easily consume GraphQL APIs for your Bridgetown website using a tidy Builder DSL on top of the [Graphlient](http://github.com/ashkan18/graphlient) gem.
+Easily consume GraphQL APIs for your [Bridgetown](https://www.bridgetownrb.com) website using a tidy Builder DSL on top of the [Graphlient](http://github.com/ashkan18/graphlient) gem.
 
 ## Installation
 
