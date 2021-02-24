@@ -12,9 +12,9 @@ module Graphtown
     class_methods do
       attr_accessor :graphql_queries
 
-      def graphql(graph_name, &block)
+      def graphql(graph_name, query = nil, &block)
         self.graphql_queries ||= Queries.new
-        graphql_queries.send("#{graph_name}=", block)
+        graphql_queries.send("#{graph_name}=", query || block)
       end
     end
 
@@ -22,8 +22,12 @@ module Graphtown
       return self.class.graphql_queries if @_executed_queries
 
       client = graphql_client
-      self.class.graphql_queries.each_pair do |graph_name, block|
-        graph_dsl = Graphlient::Query.new(&block)
+      self.class.graphql_queries.each_pair do |graph_name, value|
+        query = if value.is_a?(Proc)
+          Graphlient::Query.new(&value).to_s
+        else
+          client.parse(value)
+        end
 
         query_variables = if respond_to?("variables_for_#{graph_name}")
                             send("variables_for_#{graph_name}")
@@ -31,7 +35,7 @@ module Graphtown
 
         self.class.graphql_queries.send(
           "#{graph_name}=",
-          client.execute(graph_dsl.to_s, query_variables).data.yield_self do |data|
+          client.execute(query, query_variables).data.yield_self do |data|
             # avoid having to do query.foo.foo if possible
             data.send(graph_name)
           rescue NoMethodError
