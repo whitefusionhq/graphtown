@@ -32,5 +32,6 @@ describe(Graphtown) do
 
   it "outputs posts loaded via GraphQL" do
     expect(contents).to match "<div>I'm a title! / 123</div>"
+    expect(contents).to match "<div>I'm a title!-string / 123</div>"
   end
 end
