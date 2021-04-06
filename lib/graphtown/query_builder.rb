@@ -23,12 +23,7 @@ module Graphtown
 
       client = graphql_client
       self.class.graphql_queries.each_pair do |graph_name, value|
-        query = if value.is_a?(Proc)
-          Graphlient::Query.new(&value).to_s
-        else
-          client.parse(value)
-        end
-
+        query = parse_graphql_query(client, value)
         query_variables = if respond_to?("variables_for_#{graph_name}")
                             send("variables_for_#{graph_name}")
                           end
@@ -46,6 +41,10 @@ module Graphtown
 
       @_executed_queries = true
       self.class.graphql_queries
+    end
+
+    def parse_graphql_query(client, value)
+      value.is_a?(Proc) ? Graphlient::Query.new(&value).to_s : client.parse(value)
     end
 
     def graphql_client
